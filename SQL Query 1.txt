@@ -1,0 +1,12 @@
+select
+	mintemperaturef,
+	precipitationin,
+	zip
+from
+	weather
+where
+	precipitationin > 0
+order by
+	zip
+
+This lists precipitationin all zip codes where there was rain

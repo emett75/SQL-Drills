@@ -1,0 +1,11 @@
+select
+	start_station,
+	count(*) numtrips
+from
+	trips
+group by 
+	start_station
+order by
+	numtrips desc
+
+This shows number of trips started at each station

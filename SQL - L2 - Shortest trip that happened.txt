@@ -1,0 +1,9 @@
+select
+	duration,
+	min(duration),
+	count(*) tripstart
+from 
+	trips
+
+		What's the shortest trip that happened?
+This shows us the shortest trip was 60 minutes

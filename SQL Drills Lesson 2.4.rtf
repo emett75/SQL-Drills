@@ -1,0 +1,129 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf600
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red42\green44\blue41;\red255\green255\blue255;}
+{\*\expandedcolortbl;;\cssrgb\c21569\c22745\c21176;\cssrgb\c100000\c100000\c100000;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}.}{\leveltext\leveltemplateid1\'02\'00.;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid1}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}.}{\leveltext\leveltemplateid101\'02\'00.;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid2}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 	
+\fs40 \cf2 \cb3 1. \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 What are the three longest trips on rainy days?\cb1 \
+
+\fs24 \cf0 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 \
+\
+\
+with rainy as(\
+select\
+	date, \
+	events\
+from\
+	weather\
+where \
+	events = 'Rain' or\
+	events = 'Fog-Rain' or\
+	events = 'Rain-Thunderstorm'\
+	group by 1)\
+	\
+select\
+	trip_id,\
+	duration,\
+	start_date,\
+	date(start_date) trip_date\
+from	\
+	trips\
+join	\
+	rainy\
+	on rainy.date = trip_date\
+order by duration desc\
+limit 3\
+\
+\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sl680\sa266\partightenfactor0
+\ls1\ilvl0
+\fs40 \cf2 \cb3 	2 - \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Which station is full most often?\cb1 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\fs24 \cf0 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 \
+CREATE TABLE status_abbreviated AS\
+  SELECT *\
+  FROM status\
+  limit 10000\
+\
+**First, I abbreviated the table to a more workable size**\
+\
+\
+\
+select\
+	status_abbreviated.station_id,\
+	stations.name,\
+	count(case when docks_available=0 then 1 end) empty_count\
+from\
+	status_abbreviated\
+join	\
+	stations\
+	on stations.station_id = status_abbreviated.station_id\
+group by 1\
+order by empty_count desc\
+\
+\
+\
+
+\fs40 3 - \cf2 \cb3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Return a list of stations with a count of number of trips starting at that station but ordered by dock count.\
+\
+
+\fs24 select	\
+	start_station,\
+	dockcount,\
+	count(*)\
+from\
+	trips\
+join	\
+	stations\
+	on stations.name=trips.start_station\
+group by start_station, dockcount\
+order by dockcount desc
+\fs40 \cb1 \
+
+\fs24 \cf0 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 \
+\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sl680\sa266\partightenfactor0
+\ls2\ilvl0
+\fs40 \cf2 \cb3 4 - \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 (Challenge) What's the length of the longest trip for each day it rains anywhere?\
+\ls2\ilvl0
+\fs24 with rainy as\
+(select\
+	date\
+from\
+	weather\
+where events = 'Rain'\
+group by date),\
+\
+rain_trips as\
+(select\
+	trip_id,\
+	duration,\
+	date(start_date) trip_date\
+from\
+	trips\
+join\
+	rainy\
+	on rainy.date = trip_date\
+order by duration desc)\
+\
+select\
+	trip_date,\
+	max(duration)\
+from	\
+	rain_trips\
+group by trip_date
+\fs40 \cb1 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\fs24 \cf0 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 \
+}
